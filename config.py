@@ -35,7 +35,7 @@ SVN_AUTOPROPS_FILE = THIS_FILE_DIR + "/config.autoprops"
 # file must contain one label per line, example: 
 # LABEL_1
 # LABEL_2 
-CC_LABELS_FILE = THIS_FILE_DIR + "/labels.txt"
+#CC_LABELS_FILE = THIS_FILE_DIR + "/labels.txt"
 
 # If CC_BRANCHES_FILE is not defined, the tool will convert all branches it finds in history of the current view
 # If CC_BRANCHES_FILE is defined, the tool will transfer only those branches mentioned in file
@@ -43,7 +43,7 @@ CC_LABELS_FILE = THIS_FILE_DIR + "/labels.txt"
 # file must contain one branch name per line (without slashes), example: 
 # main  
 # user_dev
-CC_BRANCHES_FILE = THIS_FILE_DIR + "/branches.txt"
+#CC_BRANCHES_FILE = THIS_FILE_DIR + "/branches.txt"
 
 
 # If CC_IGNORED_DIRECTORIES_FILE is not defined, the tool will not import history of files
@@ -64,6 +64,10 @@ SVN_DUMP_FILE = "svndump.txt"
 # ClearCase history file created by the tool
 HISTORY_FILE = "cchistory.txt"
 
+# ClarCase history timezone by the tool (pytz.timezone())
+#HISTORY_FILE_TIMEZONE = "UTC"
+HISTORY_FILE_TIMEZONE = "Asia/Tokyo"
+
 # DUMP_SINCE_DATE activates incremental dump mode. This should be used after the full dump mode only.
 # The idea is: you convert cc2svn on the day X without using this option, working in svn and ClearCase simultaneously
 # (do not commit the same changes in svn and CC), then create incremental dump using DUMP_SINCE_DATE=X option.
@@ -73,4 +77,6 @@ HISTORY_FILE = "cchistory.txt"
 #DUMP_SINCE_DATE = "20010921.175059"
 
 # Encoding of the history file
-ENCODING = "Windows-1252"
+#ENCODING = "Windows-1252"
+ENCODING = "Shift_JIS"
+ENCODING_ERROR_HANDLING = "ignore"

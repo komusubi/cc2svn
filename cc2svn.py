@@ -128,6 +128,9 @@ if CC_BRANCHES_FILE:
 if DUMP_SINCE_DATE:            
     DUMP_SINCE_DATE = time.strptime(DUMP_SINCE_DATE, CC_DATE_FORMAT)
 
+if HISTORY_FILE_TIMEZONE == "":
+    HISTORY_FILE_TIMEZONE = "UTC"
+
 CCVIEW_TMPFILE = CACHE_DIR + "/label_config_spec_tmp_cc2svnpy"
 CCVIEW_CONFIGSPEC = CACHE_DIR + "/user_config_spec_tmp_cc2svnpy"
 
@@ -194,7 +197,7 @@ def askYesNo(question):
         if answer == "n": return False
 
 def toUTF8(text):
-    unicode_str = text.decode(ENCODING)
+    unicode_str = text.decode(ENCODING, ENCODING_ERROR_HANDLING)
     return unicode_str.encode("utf8")
 
     #return codecs.utf_8_encode(text)[0]
@@ -463,7 +466,9 @@ class SvnRevisionProps:
         self.properties.set("svn:author", toUTF8(author));
     
     def setDate(self, date):
-        self.properties.set("svn:date", time.strftime(SVN_DATE_FORMAT, date))
+        dt = datetime.datetime.fromtimestamp(time.mkdime(date))
+        utc = pytz.timezone(HISTORY_FILE_TIMEZONE).localize(dt).astimezone(pytz.utc)
+        self.properties.set("svn:date", utc.strftime(SVN_DATE_FORMAT))
     
     def setMessage(self, message):
         self.properties.set("svn:log", toUTF8(message));
@@ -830,13 +835,14 @@ class Converter:
         shellCmd(cmd, cwd=CC_VOB_DIR, outfile=file)
             
     def setConfigSpec(self, file):
-        cmd = CLEARTOOL + " setcs -def " + file        
+        cmd = CLEARTOOL + " setcs " + file
         shellCmd(cmd, cwd=CC_VOB_DIR)
     
     def setLabelSpec(self, label):
         with open(CCVIEW_TMPFILE, 'w') as file:
             file.write("element * CHECKEDOUT\n")
             file.write("element * " + label + "\n")
+            file.write("element * /main/LATEST\n")
         self.setConfigSpec(CCVIEW_TMPFILE)        
         
     def completeLabels(self):
@@ -930,10 +936,12 @@ def readList(filename):
 def main():
     
     try:
-    
+
         labels = readList(CC_LABELS_FILE)
         branches = readList(CC_BRANCHES_FILE)
         ignoredDirectories = readList(CC_IGNORED_DIRECTORIES_FILE)
+        
+        info("timezone: " + HISTORY_FILE_TIMEZONE)
     
         getCCHistory(HISTORY_FILE)
         
