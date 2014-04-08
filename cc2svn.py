@@ -79,6 +79,8 @@ LICENSING
 
 from __future__ import with_statement
 import os, subprocess, time, sys, hashlib, codecs, fnmatch
+import datetime
+import pytz
 
 USAGE = "Usage: %(cmd)s -run | -help" % { "cmd" : sys.argv[0] } 
 
@@ -466,7 +468,7 @@ class SvnRevisionProps:
         self.properties.set("svn:author", toUTF8(author));
     
     def setDate(self, date):
-        dt = datetime.datetime.fromtimestamp(time.mkdime(date))
+        dt = datetime.datetime.fromtimestamp(time.mktime(date))
         utc = pytz.timezone(HISTORY_FILE_TIMEZONE).localize(dt).astimezone(pytz.utc)
         self.properties.set("svn:date", utc.strftime(SVN_DATE_FORMAT))
     
