@@ -21,6 +21,11 @@ Features:
  - cache for ClearCase files
  - tested on Linux/Solaris and __Windows__
 
+Requires
+--------
+ - pytz module
+   https://pypi.python.org/pypi/pytz/
+   
 Main points
 -----------
 
